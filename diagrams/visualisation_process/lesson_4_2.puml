@@ -1,0 +1,58 @@
+@startuml
+
+skinparam database {
+    BackgroundColor LightBlue
+    BorderColor Black
+}
+
+skinparam actor {
+    BackgroundColor LightGreen
+    BorderColor Black
+}
+
+actor Покупатель as C
+participant "UI магазина" as UI
+participant "Контроль заказов" as OC
+participant "Сервис оплаты" as PS
+participant "Банковский модуль" as PAY
+database "База данных" as DB
+
+group "1. Оформление заказа"
+C -> UI : запрос на оформление заказа
+activate UI
+UI -> OC : передача данных в модуль
+activate OC
+OC -> DB : сохранение данных о заказе
+activate DB
+DB -> OC : данные о заказе сохранены в БД
+deactivate DB
+deactivate UI
+deactivate OC
+end
+
+
+group "Оплата заказа"
+OC -> PS : оплата заказа
+activate OC
+PS -[#Green]-> OC : подтверждение оплаты заказа
+activate PS
+OC -[#Green]-> UI : подтверждение заказа
+activate UI
+UI -[#Green]-> C : заказ оформлен
+
+PS -> PAY : оплата по реквизитам карты
+activate PAY
+PS -> PAY : оплата СБП
+
+alt Оплата прошла успешно
+PAY -[#Green]-> OC : банк подтвердил оплату
+else Ошибка оплаты
+PAY -[#Red]-> OC : ошибка в процессе оплаты
+deactivate UI
+deactivate PAY
+deactivate OC
+deactivate PS
+end
+end
+
+@enduml
