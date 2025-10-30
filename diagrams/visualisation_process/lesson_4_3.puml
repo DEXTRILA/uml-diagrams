@@ -1,0 +1,87 @@
+@startuml
+
+skinparam database {
+    BackgroundColor LightBlue
+    BorderColor Black
+}
+
+skinparam actor {
+    BackgroundColor LightGreen
+    BorderColor Black
+}
+
+actor Покупатель as C
+participant "Форма товаров (UI)" as UIG
+participant "Корзина (UI)" as UIT
+participant "Форма заказа (UI)" as UIO
+participant "Контроль заказов" as OC
+participant "Сервис оплаты" as PS
+participant "Банковский модуль" as PAY
+database "База данных" as DB
+participant "Сервис уведомлений" as NS
+
+group "Просмотр товаров"
+C -> UIG : поиск товара
+activate UIG
+UIG --> C : данные о товаре
+end
+
+group "Добавление в корзину"
+UIG -> UIT : добавить товар в корзину
+activate UIT
+UIT --> UIG : товар добавлен в корзину
+deactivate UIG
+end
+
+group "Изменение заказа"
+UIT -> UIO : изменение товаров в корзине
+activate UIO
+activate DB
+UIO -> DB : обновление данных о заказе в БД
+DB --> UIO : данные о составе заказа сохранены в БД
+
+deactivate DB
+deactivate UIT
+end
+
+group "Оформление заказа"
+C -> UIO : запрос на оформление заказа
+UIO -> OC : передача данных в модуль
+activate OC
+OC -> DB : сохранение данных о заказе
+activate DB
+note right : Заказ сохранен в статусе "Ожидание оплаты"
+DB --> OC : данные о заказе сохранены в БД
+deactivate DB
+deactivate OC
+end
+
+
+group "Оплата заказа"
+
+OC -> PS : оплата заказа
+activate PS
+activate OC
+PS -[#Green]-> OC : подтверждение оплаты заказа
+OC -[#Green]-> UIO : подтверждение заказа
+UIO -[#LightBlue]-> C : уведомление покупателя об успешном оформлении заказа
+PS -> PAY : оплата по реквизитам карты
+activate PAY
+PS -> PAY : оплата СБП
+alt Оплата прошла успешно
+PAY -[#Green]-> OC : банк подтвердил оплату
+else Ошибка оплаты
+PAY -[#Red]-> OC : ошибка в процессе оплаты
+deactivate UIO
+deactivate PAY
+deactivate PS
+end
+OC -> DB : сохранение данных об оплате заказа
+activate DB
+DB --> OC : данные об оплате заказа сохранены в БД
+note right : Заказ сохранен в статусе "Оплачен"
+OC -[#LightBlue]-> NS : информация для формирования уведомления об оплате заказа
+deactivate DB
+deactivate OC
+end
+@enduml

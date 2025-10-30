@@ -17,7 +17,7 @@ participant "Сервис оплаты" as PS
 participant "Банковский модуль" as PAY
 database "База данных" as DB
 
-group "1. Оформление заказа"
+group "Оформление заказа"
 C -> UI : запрос на оформление заказа
 activate UI
 UI -> OC : передача данных в модуль
