@@ -1,0 +1,50 @@
+@startuml
+abstract class Payment {
+    - amount
+    - paymentDate
+    - transactionId
+--
+    + getAmount()
+    + getPaymentDate()
+    + getTransactionId()
+    + setAmount()
+    + {abstract} processPayment()
+}
+
+class CashPayment {
+    - cashProvided
+--
+    + getCashProvided()
+    + methodCalculation()
+    + {abstract} processPayment()
+}
+
+class CardPayment {
+    - cardNumber
+    - holderName
+    - expireDate
+--
+    + getCardNumber()
+    + getHolderName()
+    + getExpireDate()
+    + methodValidate()
+    + {abstract} processPayment()
+}
+
+class PaymentManager {
+- amount
+- paymentDate
+- transactionId
+--
+    + getAmount()
+    + getPaymentDate()
+    + getTransactionId()
+    + processAllPayments()
+}
+
+ Payment <|-- CardPayment
+ Payment <|-- CashPayment
+ PaymentManager "1" *-- "0..*" Payment
+
+
+@enduml
