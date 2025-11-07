@@ -32,13 +32,15 @@ class CardPayment {
 }
 
 class PaymentManager {
-- amount
-- paymentDate
-- transactionId
+    - amount
+    - paymentDate
+    - transactionId
+    - payments: List<Payment>
 --
     + getAmount()
     + getPaymentDate()
     + getTransactionId()
+    + addPayment()
     + processAllPayments()
 }
 
