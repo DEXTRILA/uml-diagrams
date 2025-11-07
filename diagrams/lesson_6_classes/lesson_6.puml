@@ -1,0 +1,57 @@
+@startuml
+
+class User {
+    - userId : int
+}
+
+class Student {
+    - studentId : int
+    - fullname : string
+}
+
+class Instructor {
+    - instructorId : int
+}
+
+class Course {
+    - courseId : int
+    - title : string
+--
+    + getPaymentId ()
+    + getStudentId ()
+}
+
+class Enrollment {
+    - studentId : int
+    - enrollmentDate : date
+    - grade : int
+--
+    + getStudentId ()
+}
+
+class Material {
+    - materialId : int
+}
+
+class Lessons {
+    - lessonId : int
+--
+    + getMaterialId ()
+}
+
+class PaymentProcessor {
+    - paymentId : int
+    - paymentDate : date
+}
+
+User<|--Student : наследование, к. студент подтип к. пользователи
+User<|-Instructor : наследование, к. инструктор подтип к. пользователи
+Course "1" *-- "0..*" Student : ассоциация, 0..*, курс может быть зачислен множеству студентов, либо никому
+Student "1" *-- "1..*" Course : ассоциация, 1..*, студент может быть зачислен на 1 и более курс
+Course *-- Material : композиция, при удалении курса, задания тоже удаляются
+Material *-- Lessons : композиция, материал содержит задания
+Student "1" *-- "0..*" Enrollment : ассоциативный клас, дата зачисления студента
+Course "1" *-- "0..*" Enrollment : ассоциативный класс, оценка пройденного курса студентом
+' Зависимость, класс Course использует класс PaymentProcessor
+Course ..> PaymentProcessor : зависимость, использует процессор для оплаты
+@enduml
