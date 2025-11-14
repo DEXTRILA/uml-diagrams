@@ -2,25 +2,40 @@
 
 class User {
     - userId : int
+    - paymentId : int
+--
+    + getStudentId ()
+    + getInstuctorId ()
+    + getPaymentId ()
 }
 
 class Student {
     - studentId : int
     - fullname : string
+    - email : string
+--
+    + setUserId ()
+    + setPaymentId ()
 }
 
 class Instructor {
     - instructorId : int
+    - fullname : string
+    - email : string
+--
+    + setUserId ()
 }
 
 class Course {
     - courseId : int
     - title : string
+    - dateOfExpire : date
 --
     + getPaymentId ()
     + getStudentId ()
+    + getUserId ()
 }
-
+' Ассоциативный класс Enrollment
 class Enrollment {
     - studentId : int
     - enrollmentDate : date
@@ -31,10 +46,15 @@ class Enrollment {
 
 class Material {
     - materialId : int
+    - materialContent : string
+--
+    + setCourseId ()
+    + getUserId ()
 }
 
 class Lessons {
     - lessonId : int
+    - materialContent : string
 --
     + getMaterialId ()
 }
@@ -42,16 +62,25 @@ class Lessons {
 class PaymentProcessor {
     - paymentId : int
     - paymentDate : date
+--
+    + getUserId ()
 }
-
+' Ассоциация, связь между классом User и PaymentProcessor
+User "1" *-- "1..*" PaymentProcessor : ассоциация, 1..*, произведение оплаты курса
+' Наследование, класс Student является подтипом класса User
 User<|--Student : наследование, к. студент подтип к. пользователи
+' Наследование, класс Instructor является подтипом класса User
 User<|-Instructor : наследование, к. инструктор подтип к. пользователи
+' Ассоциация, связь между классом Course и Student по разным сценариям
 Course "1" *-- "0..*" Student : ассоциация, 0..*, курс может быть зачислен множеству студентов, либо никому
 Student "1" *-- "1..*" Course : ассоциация, 1..*, студент может быть зачислен на 1 и более курс
+' Композиция, класс Course содержит класс Material
 Course *-- Material : композиция, при удалении курса, задания тоже удаляются
+' Композиция, класс Material содержит класс Lessons
 Material *-- Lessons : композиция, материал содержит задания
+' Ассоциативный класс, связь классов Stundent и Course с Enrollment
 Student "1" *-- "0..*" Enrollment : ассоциативный клас, дата зачисления студента
 Course "1" *-- "0..*" Enrollment : ассоциативный класс, оценка пройденного курса студентом
 ' Зависимость, класс Course использует класс PaymentProcessor
-Course ..> PaymentProcessor : зависимость, использует процессор для оплаты
+Course ..> PaymentProcessor : зависимость, использует процессор для проверки оплаты курса
 @enduml
