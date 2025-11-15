@@ -1,0 +1,41 @@
+@startuml
+left to right direction
+actor "Клиент" as Client
+actor "Кредитный менеджер" as CM
+actor "Служба безопасности" as SEC
+actor "Бюро кредитных историй" as BKI
+
+' UseCase'ы
+rectangle "Рассмотрение кредитной заявки" {
+    (Подать кредитную заявку) as UC1
+    (Рассмотреть кредитную заявку) as UC2
+    (Выполнить правовую проверку) as UC3
+    (Проверить финансовую благонадёжность) as UC4
+    (Принять решение по заявке) as UC5 
+    (Запросить дополнительные данные) as UC6
+    (Одобрить заявку заёмщика) as UC7
+    (Отклонить заявку заёмщика) as UC8
+}
+
+' Связи акторов
+Client --> UC1
+CM --> UC2
+CM --> UC5
+CM --> UC6
+CM --> UC7
+CM --> UC8
+SEC --> UC3
+BKI --> UC4
+
+' Тип связи "Обобщение"
+SEC --> BKI
+
+' Тип связи "Включение include"
+UC2 .> UC3 : include
+UC2 .> UC4 : include
+UC2 .> UC6 : include
+
+'Тип связи "Расширение extends"
+UC7 <. UC5 : extends
+UC8 <. UC5 : extends
+@enduml
